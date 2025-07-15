@@ -435,29 +435,36 @@ class _IndexPageState extends State<IndexPage> {
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 64),
       child: Center(
         child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 36.4),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 1400),
-            child: GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: MediaQuery.of(context).size.width > 992 ? 3 : (MediaQuery.of(context).size.width > 768 ? 2 : 1),
-                crossAxisSpacing: 32,
-                mainAxisSpacing: 32,
-                childAspectRatio: 1.0,
-              ),
-              itemCount: features.length,
-              itemBuilder: (context, index) {
-                final feature = features[index];
-                return _FeatureCard(
-                  icon: feature['icon'] as IconData,
-                  title: feature['title'] as String,
-                  description: feature['desc'] as String,
-                  isDark: isDark,
-                );
-              },
-            ),
+          constraints: const BoxConstraints(maxWidth: 1400),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final crossAxisCount = constraints.maxWidth > 992
+                  ? 3
+                  : (constraints.maxWidth > 768 ? 2 : 1);
+
+              // Use fixed card height instead of aspect ratio
+              return GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+
+                  crossAxisCount: crossAxisCount,
+                  crossAxisSpacing: 32,
+                  mainAxisSpacing: 32,
+                  childAspectRatio: 0.8, // This will be overridden by fixed height
+                ),
+                itemCount: features.length,
+                itemBuilder: (context, index) {
+                  final feature = features[index];
+                  return _FeatureCard(
+                    icon: feature['icon'] as IconData,
+                    title: feature['title'] as String,
+                    description: feature['desc'] as String,
+                    isDark: isDark,
+                  );
+                },
+              );
+            },
           ),
         ),
       ),
@@ -836,26 +843,21 @@ class _FeatureCard extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
-        child: Stack(
+        child: Column(
+          mainAxisSize: MainAxisSize.min, // Let it size to content
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Top gradient bar
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                height: 4,
-                decoration: BoxDecoration(
-                  gradient: isDark ? darkHeroGradient : lightHeroGradient,
-                ),
+            Container(
+              height: 4,
+              decoration: BoxDecoration(
+                gradient: isDark ? darkHeroGradient : lightHeroGradient,
               ),
             ),
-            // Card content
             Padding(
               padding: const EdgeInsets.all(24.0),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
                     width: 80,
@@ -875,19 +877,17 @@ class _FeatureCard extends StatelessWidget {
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).textTheme.bodyMedium?.color,
+                      color: isDark ? darkText : lightText,
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Expanded(
-                    child: Text(
-                      description,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 15,
-                        color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
-                        height: 1.5,
-                      ),
+                  Text(
+                    description,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 15,
+                      color: (isDark ? darkText : lightText).withOpacity(0.7),
+                      height: 1.5,
                     ),
                   ),
                 ],
@@ -899,6 +899,9 @@ class _FeatureCard extends StatelessWidget {
     );
   }
 }
+
+
+
 
 class _BenefitItem extends StatelessWidget {
   final IconData icon;
