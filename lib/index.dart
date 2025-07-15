@@ -443,26 +443,22 @@ class _IndexPageState extends State<IndexPage> {
                   : (constraints.maxWidth > 768 ? 2 : 1);
 
               // Use fixed card height instead of aspect ratio
-              return GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-
-                  crossAxisCount: crossAxisCount,
-                  crossAxisSpacing: 32,
-                  mainAxisSpacing: 32,
-                  childAspectRatio: 0.8, // This will be overridden by fixed height
-                ),
-                itemCount: features.length,
-                itemBuilder: (context, index) {
-                  final feature = features[index];
-                  return _FeatureCard(
-                    icon: feature['icon'] as IconData,
-                    title: feature['title'] as String,
-                    description: feature['desc'] as String,
-                    isDark: isDark,
+              return Wrap(
+                spacing: 32,
+                runSpacing: 32,
+                children: features.map((feature) {
+                  final rawCardWidth = (constraints.maxWidth - (crossAxisCount - 1) * 32) / crossAxisCount;
+                  final cardWidth = rawCardWidth > 450 ? 350.0 : rawCardWidth;
+                  return SizedBox(
+                    width: cardWidth,
+                    child: _FeatureCard(
+                      icon: feature['icon'] as IconData,
+                      title: feature['title'] as String,
+                      description: feature['desc'] as String,
+                      isDark: isDark,
+                    ),
                   );
-                },
+                }).toList(),
               );
             },
           ),
@@ -844,9 +840,9 @@ class _FeatureCard extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
         child: Column(
-          mainAxisSize: MainAxisSize.min, // Let it size to content
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
           children: [
+            // Gradient bar at top
             Container(
               height: 4,
               decoration: BoxDecoration(
@@ -899,6 +895,7 @@ class _FeatureCard extends StatelessWidget {
     );
   }
 }
+
 
 
 
