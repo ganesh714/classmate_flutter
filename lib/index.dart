@@ -97,50 +97,50 @@ class _IndexPageState extends State<IndexPage> {
                   : _buildLogo(isDark),
               flexibleSpace: MediaQuery.of(context).size.width > 768
                   ? Center(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween, // Similar to CSS justify-content: space-between
-                          children: [
-                            _buildLogo(isDark),
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                _buildNavButton("Home", () => _scrollController.animateTo(0, duration: const Duration(seconds: 1), curve: Curves.easeInOut)),
-                                _buildNavButton("Features", () => _scrollTo(_featuresKey)),
-                                _buildNavButton("Contact", () => _scrollTo(_contactKey)),
-                              ],
-                            ),
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon: Icon(isDark ? FontAwesomeIcons.sun : FontAwesomeIcons.moon),
-                                  color: headerTextColor,
-                                  onPressed: _toggleTheme,
-                                ),
-                                const SizedBox(width: 16),
-                                SizedBox(
-                                  height: 40,
-                                  child: _GradientButton(
-                                    gradient: isDark ? darkPrimaryButtonGradient : lightPrimaryButtonGradient,
-                                    onPressed: () => Navigator.pushNamed(context, '/login'),
-                                    child: const Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(FontAwesomeIcons.signInAlt, size: 14, color: lightBg),
-                                        SizedBox(width: 6),
-                                        Text('Login/Signup', style: TextStyle(fontSize: 16)),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween, // Similar to CSS justify-content: space-between
+                    children: [
+                      _buildLogo(isDark),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _buildNavButton("Home", () => _scrollController.animateTo(0, duration: const Duration(seconds: 1), curve: Curves.easeInOut)),
+                          _buildNavButton("Features", () => _scrollTo(_featuresKey)),
+                          _buildNavButton("Contact", () => _scrollTo(_contactKey)),
+                        ],
                       ),
-                    )
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: Icon(isDark ? FontAwesomeIcons.sun : FontAwesomeIcons.moon),
+                            color: headerTextColor,
+                            onPressed: _toggleTheme,
+                          ),
+                          const SizedBox(width: 16),
+                          SizedBox(
+                            height: 40,
+                            child: _GradientButton(
+                              gradient: isDark ? darkPrimaryButtonGradient : lightPrimaryButtonGradient,
+                              onPressed: () => Navigator.pushNamed(context, '/login'),
+                              child: const Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(FontAwesomeIcons.signInAlt, size: 14, color: lightBg),
+                                  SizedBox(width: 6),
+                                  Text('Login/Signup', style: TextStyle(fontSize: 16)),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              )
                   : null,
               actions: [
                 if (MediaQuery.of(context).size.width <= 768)
