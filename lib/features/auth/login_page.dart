@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -12,29 +13,55 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   bool _isLoading = false;
+  bool _isDarkMode = false;
 
   @override
-  void dispose() {
-    _nameController.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    _loadTheme();
+    _loadName();
   }
 
-  void _submitForm() {
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
+  Future<void> _loadTheme() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isDarkMode = prefs.getBool('isDarkMode') ?? false;
+    });
+  }
 
-      // Simulate login process
-      Future.delayed(const Duration(milliseconds: 500), () {
-        Navigator.pushReplacementNamed(context, '/home');
-      });
-    }
+  Future<void> _toggleTheme() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isDarkMode = !_isDarkMode;
+    });
+    await prefs.setBool('isDarkMode', _isDarkMode);
+  }
+
+  Future<void> _loadName() async {
+    final prefs = await SharedPreferences.getInstance();
+    final name = prefs.getString('user_name') ?? '';
+    _nameController.text = name;
+  }
+
+  Future<void> _saveName(String name) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user_name', name);
+  }
+
+  void _submitForm() async {
+    setState(() {
+      _isLoading = true;
+    });
+    final name = _nameController.text.trim().isEmpty ? 'Demo User' : _nameController.text.trim();
+    await _saveName(name);
+    await Future.delayed(const Duration(milliseconds: 500));
+    if (!mounted) return;
+    Navigator.pushReplacementNamed(context, '/home');
   }
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final isDarkMode = _isDarkMode;
     final gradient = isDarkMode ? darkPrimaryButtonGradient : lightPrimaryButtonGradient;
     final accent = isDarkMode ? darkAccent : lightAccent;
     final accentSecondary = isDarkMode ? darkAccentSecondary : lightAccentSecondary;
@@ -42,8 +69,10 @@ class _LoginPageState extends State<LoginPage> {
     final textSecondaryColor = isDarkMode ? darkTextSecondary : lightTextSecondary;
     final cardBg = isDarkMode ? darkCardBg : lightCardBg;
     final cardBorder = isDarkMode ? darkCardBorder : lightCardBorder;
+    final logoAsset = isDarkMode ? 'assets/logos/logo-dark.png' : 'assets/logos/logo-light.png';
 
     return Scaffold(
+      backgroundColor: isDarkMode ? darkBg : lightBg,
       body: Stack(
         children: [
           // Grid background
@@ -69,8 +98,8 @@ class _LoginPageState extends State<LoginPage> {
                 boxShadow: [
                   BoxShadow(
                     color: isDarkMode ? darkHeaderShadow : lightHeaderShadow,
-                      blurRadius: 15,
-                      offset: const Offset(0, 4),
+                    blurRadius: 15,
+                    offset: const Offset(0, 4),
                   ),
                 ],
               ),
@@ -79,15 +108,14 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   Row(
                     children: [
-                      // Logo placeholder - replace with actual logo image
+                      // Logo image
                       Container(
                         width: 40,
                         height: 40,
-                        decoration: BoxDecoration(
+                        child: ClipRRect(
                           borderRadius: BorderRadius.circular(8),
-                          color: accent,
+                          child: Image.asset(logoAsset, fit: BoxFit.cover),
                         ),
-                        child: const Icon(Icons.school, color: Colors.white),
                       ),
                       const SizedBox(width: 8),
                       Text(
@@ -105,9 +133,7 @@ class _LoginPageState extends State<LoginPage> {
                       isDarkMode ? Icons.light_mode : Icons.dark_mode,
                       color: textColor,
                     ),
-                    onPressed: () {
-                      // Implement theme toggle functionality
-                    },
+                    onPressed: _toggleTheme,
                   ),
                 ],
               ),
@@ -159,11 +185,10 @@ class _LoginPageState extends State<LoginPage> {
                             Container(
                               width: 60,
                               height: 60,
-                              decoration: BoxDecoration(
+                              child: ClipRRect(
                                 borderRadius: BorderRadius.circular(12),
-                                color: accent,
+                                child: Image.asset(logoAsset, fit: BoxFit.cover),
                               ),
-                              child: const Icon(Icons.school, color: Colors.white, size: 32),
                             ),
                             const SizedBox(height: 24),
 
