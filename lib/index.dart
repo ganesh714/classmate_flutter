@@ -1009,24 +1009,7 @@ class _StatBar extends StatelessWidget {
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(3),
-                    gradient: LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      colors: isDark
-                          ? [
-                        const Color(0xFF3a54cc),
-                        const Color(0xFF6b2bb3),
-                        const Color(0xFFcc2f7d),
-                        const Color(0xFFcc1f5d),
-                      ]
-                          : [
-                        const Color(0xFF4d6bff),
-                        const Color(0xFF863ae0),
-                        const Color(0xFFff3c9e),
-                        const Color(0xFFff2673),
-                      ],
-                      stops: const [0.0, 0.25, 0.70, 1.0],
-                    ),
+                    gradient: isDark ? darkMainGradient180Deg : lightMainGradient180Deg,
                   ),
                 ),
               ),
