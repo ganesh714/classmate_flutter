@@ -1,14 +1,317 @@
 import 'package:flutter/material.dart';
+import '../../theme/app_theme.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
+
+  void _submitForm() {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      // Simulate login process
+      Future.delayed(const Duration(milliseconds: 500), () {
+        Navigator.pushReplacementNamed(context, '/home');
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text('Login Page Placeholder'),
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final gradient = isDarkMode ? darkPrimaryButtonGradient : lightPrimaryButtonGradient;
+    final accent = isDarkMode ? darkAccent : lightAccent;
+    final accentSecondary = isDarkMode ? darkAccentSecondary : lightAccentSecondary;
+    final textColor = isDarkMode ? darkText : lightText;
+    final textSecondaryColor = isDarkMode ? darkTextSecondary : lightTextSecondary;
+    final cardBg = isDarkMode ? darkCardBg : lightCardBg;
+    final cardBorder = isDarkMode ? darkCardBorder : lightCardBorder;
+
+    return Scaffold(
+      body: Stack(
+        children: [
+          // Grid background
+          Positioned.fill(
+            child: CustomPaint(
+              painter: _GridPainter(
+                color: isDarkMode
+                    ? darkTextSecondary.withOpacity(0.05)
+                    : lightTextSecondary.withOpacity(0.05),
+              ),
+            ),
+          ),
+
+          // Header
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              decoration: BoxDecoration(
+                color: isDarkMode ? darkScrolledHeaderBg : lightScrolledHeaderBg,
+                boxShadow: [
+                  BoxShadow(
+                    color: isDarkMode ? darkHeaderShadow : lightHeaderShadow,
+                      blurRadius: 15,
+                      offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      // Logo placeholder - replace with actual logo image
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: accent,
+                        ),
+                        child: const Icon(Icons.school, color: Colors.white),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'ClassmateAI',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: textColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      isDarkMode ? Icons.light_mode : Icons.dark_mode,
+                      color: textColor,
+                    ),
+                    onPressed: () {
+                      // Implement theme toggle functionality
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Login form
+          Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: Container(
+                constraints: const BoxConstraints(maxWidth: 420),
+                decoration: BoxDecoration(
+                  color: cardBg,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: cardBorder),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 32,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: Stack(
+                  children: [
+                    // Gradient top border
+                    Positioned(
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        height: 4,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [accent, accentSecondary],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(32),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // Logo
+                            Container(
+                              width: 60,
+                              height: 60,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                color: accent,
+                              ),
+                              child: const Icon(Icons.school, color: Colors.white, size: 32),
+                            ),
+                            const SizedBox(height: 24),
+
+                            // Title
+                            ShaderMask(
+                              shaderCallback: (bounds) {
+                                return LinearGradient(
+                                  colors: [accent, accentSecondary],
+                                ).createShader(bounds);
+                              },
+                              child: Text(
+                                'Welcome to the Demo',
+                                style: TextStyle(
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+
+                            // Subtitle
+                            Text(
+                              'Get started with one click',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: textSecondaryColor,
+                              ),
+                            ),
+                            const SizedBox(height: 32),
+
+                            // Name field
+                            TextFormField(
+                              controller: _nameController,
+                              decoration: InputDecoration(
+                                labelText: 'Enter your name (optional)',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                contentPadding: const EdgeInsets.all(16),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+
+                            // Demo message
+                            Text(
+                              '🚀 No password needed. Click below to continue.',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: textSecondaryColor,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 24),
+
+                            // Login button
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: _isLoading ? null : _submitForm,
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
+                                  backgroundColor: Colors.transparent,
+                                  shadowColor: Colors.transparent,
+                                ),
+                                child: Ink(
+                                  decoration: BoxDecoration(
+                                    gradient: gradient,
+                                    borderRadius: BorderRadius.circular(50),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: accent.withOpacity(0.4),
+                                        blurRadius: 20,
+                                      ),
+                                    ],
+                                  ),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    alignment: Alignment.center,
+                                    child: _isLoading
+                                        ? const SizedBox(
+                                      width: 24,
+                                      height: 24,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                        : Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(Icons.rocket_launch, color: Colors.white),
+                                        const SizedBox(width: 12),
+                                        Text(
+                                          'Enter Demo',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
+}
+
+// Custom painter for the grid background
+class _GridPainter extends CustomPainter {
+  final Color color;
+
+  _GridPainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = 1;
+
+    // Draw vertical lines
+    for (double x = 0; x < size.width; x += 40) {
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
+    }
+
+    // Draw horizontal lines
+    for (double y = 0; y < size.height; y += 40) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
