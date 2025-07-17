@@ -33,22 +33,51 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   // Navigation items for mobile (limited to fit in bottom nav)
   final List<Map<String, dynamic>> _mobileNavItems = [
-    {'id': 'dashboard', 'icon': FontAwesomeIcons.chartColumn, 'title': 'Dashboard'},
+    {
+      'id': 'dashboard',
+      'icon': FontAwesomeIcons.chartColumn,
+      'title': 'Dashboard'
+    },
     {'id': 'chatbot', 'icon': FontAwesomeIcons.robot, 'title': 'AI Chatbot'},
     {'id': 'notes', 'icon': FontAwesomeIcons.stickyNote, 'title': 'Notes'},
-    {'id': 'taskManager', 'icon': FontAwesomeIcons.tasks, 'title': 'Task Manager'},
-    {'id': 'attendance', 'icon': FontAwesomeIcons.calendarDays, 'title': 'Attendance'},
+    {
+      'id': 'taskManager',
+      'icon': FontAwesomeIcons.tasks,
+      'title': 'Task Manager'
+    },
+    {
+      'id': 'attendance',
+      'icon': FontAwesomeIcons.calendarDays,
+      'title': 'Attendance'
+    },
     {'id': 'settings', 'icon': FontAwesomeIcons.cog, 'title': 'Settings'},
-    {'id': 'darkToggle', 'icon': null, 'title': 'Dark Mode', 'isToggle': true}, // icon will be set dynamically
+    {
+      'id': 'darkToggle',
+      'icon': null,
+      'title': 'Dark Mode',
+      'isToggle': true
+    }, // icon will be set dynamically
   ];
 
   // Navigation items for desktop
   final List<Map<String, dynamic>> _menuItems = [
-    {'id': 'dashboard', 'icon': FontAwesomeIcons.chartColumn, 'title': 'Dashboard'},
+    {
+      'id': 'dashboard',
+      'icon': FontAwesomeIcons.chartColumn,
+      'title': 'Dashboard'
+    },
     {'id': 'chatbot', 'icon': FontAwesomeIcons.robot, 'title': 'AI Chatbot'},
     {'id': 'notes', 'icon': FontAwesomeIcons.stickyNote, 'title': 'Notes'},
-    {'id': 'taskManager', 'icon': FontAwesomeIcons.tasks, 'title': 'Task Manager'},
-    {'id': 'attendance', 'icon': FontAwesomeIcons.calendarDays, 'title': 'Attendance'},
+    {
+      'id': 'taskManager',
+      'icon': FontAwesomeIcons.tasks,
+      'title': 'Task Manager'
+    },
+    {
+      'id': 'attendance',
+      'icon': FontAwesomeIcons.calendarDays,
+      'title': 'Attendance'
+    },
   ];
 
   final List<Map<String, dynamic>> _systemItems = [
@@ -114,7 +143,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: _isDarkMode ? darkCardBg : lightCardBg,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           title: Text(
             'Confirm Logout',
             style: GoogleFonts.inter(
@@ -134,8 +164,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               onPressed: () => Navigator.of(context).pop(),
               style: TextButton.styleFrom(
                 backgroundColor: _isDarkMode ? darkCardBg : lightCardBg,
-                side: BorderSide(color: _isDarkMode ? darkCardBorder : lightCardBorder),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                side: BorderSide(
+                    color: _isDarkMode ? darkCardBorder : lightCardBorder),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
               ),
               child: Text(
                 'Cancel',
@@ -151,7 +183,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               },
               style: TextButton.styleFrom(
                 backgroundColor: const Color(0xFFEF4444),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
               ),
               child: Text(
                 'Logout',
@@ -184,76 +217,84 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             // Grid background
             _buildGridBackground(),
 
-            // Side panel + expand button (desktop only)
+            // Desktop layout
             if (isDesktop)
-              Positioned(
-                left: 0,
-                top: 0,
-                bottom: 0,
-                width: panelWidth,
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    SizedBox(
-                      width: panelWidth,
-                      child: _buildSidePanel(),
-                    ),
-                    if (!_isPanelExpanded)
-                      Positioned(
-                        right: 0,
-                        top: 25,
-                        child: Material(
-                          color: Colors.transparent,
-                          child: GestureDetector(
-                            onTap: _togglePanel,
-                            child: Container(
-                              width: expandBtnWidth,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: _isDarkMode ? darkCardBorder : lightCardBorder,
-                                borderRadius: const BorderRadius.only(
-                                  topRight: Radius.circular(10),
-                                  bottomRight: Radius.circular(10),
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.15),
-                                    blurRadius: 8,
-                                    offset: const Offset(2, 0),
-                                  ),
-                                ],
-                              ),
-                              child: Center(
-                                child: Icon(
-                                  FontAwesomeIcons.chevronRight,
-                                  size: 16,
-                                  color: _isDarkMode ? darkText : lightText,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
+              Row(
+                children: [
+                  // Side panel
+                  _buildSidePanel(),
+
+                  // Main content
+                  Expanded(
+                    child: Container(
+                      margin: EdgeInsets.only(
+                        bottom: !isDesktop
+                            ? 60
+                            : 0, // Add bottom margin for mobile nav
                       ),
+                      child: _buildMainContent(),
+                    ),
+                  ),
+                ],
+              )
+            else
+              // Mobile layout (original Stack structure)
+              Positioned.fill(
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        margin: EdgeInsets.only(
+                          bottom: !isDesktop ? 60 : 0,
+                        ),
+                        child: _buildMainContent(),
+                      ),
+                    ),
+                    _buildBottomNavigation(),
                   ],
                 ),
               ),
 
-            // Main content
-            Positioned(
-              left: isDesktop ? panelWidth : 0,
-              top: 0,
-              right: 0,
-              bottom: 0,
-              child: Container(
-                margin: EdgeInsets.only(
-                  bottom: !isDesktop ? 60 : 0, // Add bottom margin for mobile nav
+            // Expand button (only visible when panel is collapsed and on desktop)
+            if (isDesktop && !_isPanelExpanded)
+              Positioned(
+                left:
+                    panelWidth, // Position button directly to the right of the panel
+                top: 40, // Adjust to align with logo center if needed
+                child: Material(
+                  color: Colors.transparent,
+                  child: GestureDetector(
+                    onTap: _togglePanel,
+                    child: Container(
+                      width: expandBtnWidth,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: _isDarkMode ? darkCardBorder : lightCardBorder,
+                        borderRadius: const BorderRadius.only(
+                          topRight: Radius.circular(12),
+                          bottomRight: Radius.circular(12),
+                          topLeft: Radius.circular(0),
+                          bottomLeft: Radius.circular(0),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.15),
+                            blurRadius: 8,
+                            offset: const Offset(2, 0),
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: Icon(
+                          FontAwesomeIcons.chevronRight,
+                          size: 16,
+                          color: _isDarkMode ? darkText : lightText,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-                child: _buildMainContent(),
               ),
-            ),
-
-            // Bottom navigation (mobile only)
-            if (!isDesktop) _buildBottomNavigation(),
           ],
         ),
       ),
@@ -283,7 +324,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       decoration: BoxDecoration(
         color: _isDarkMode ? darkCardBg : lightCardBg,
         border: Border(
-          right: BorderSide(color: _isDarkMode ? darkCardBorder : lightCardBorder),
+          right:
+              BorderSide(color: _isDarkMode ? darkCardBorder : lightCardBorder),
         ),
         boxShadow: [
           BoxShadow(
@@ -305,7 +347,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           padding: const EdgeInsets.all(16),
           child: Center(
             child: Image.asset(
-              _isDarkMode ? 'assets/logos/logo-dark.png' : 'assets/logos/logo-light.png',
+              _isDarkMode
+                  ? 'assets/logos/logo-dark.png'
+                  : 'assets/logos/logo-light.png',
               height: 50,
               errorBuilder: (context, error, stackTrace) => Container(
                 width: 50,
@@ -338,8 +382,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 // Dark mode toggle
                 _buildNarrowNavItem({
                   'id': 'darkToggle',
-                  'icon': _isDarkMode ? FontAwesomeIcons.sun : FontAwesomeIcons.moon,
-                  'title': _isDarkMode ? 'Light Mode' : 'Dark Mode',
+                  'icon': _isDarkMode
+                      ? FontAwesomeIcons.sun
+                      : FontAwesomeIcons.moon,
+                  'title': 'Dark Mode',
                   'isToggle': true,
                 }),
               ],
@@ -384,7 +430,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 child: Row(
                   children: [
                     Image.asset(
-                      _isDarkMode ? 'assets/logos/logo-dark.png' : 'assets/logos/logo-light.png',
+                      _isDarkMode
+                          ? 'assets/logos/logo-dark.png'
+                          : 'assets/logos/logo-light.png',
                       height: 50,
                       errorBuilder: (context, error, stackTrace) => Container(
                         width: 50,
@@ -405,7 +453,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       child: ShaderMask(
                         shaderCallback: (bounds) => LinearGradient(
                           colors: [
-                            _isDarkMode ? darkAccentSecondary : lightAccentSecondary,
+                            _isDarkMode
+                                ? darkAccentSecondary
+                                : lightAccentSecondary,
                             _isDarkMode ? darkAccent : lightAccent,
                           ],
                         ).createShader(bounds),
@@ -452,7 +502,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         style: GoogleFonts.inter(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
-                          color: _isDarkMode ? darkTextSecondary : lightTextSecondary,
+                          color: _isDarkMode
+                              ? darkTextSecondary
+                              : lightTextSecondary,
                           letterSpacing: 0.5,
                         ),
                       ),
@@ -475,15 +527,20 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         style: GoogleFonts.inter(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
-                          color: _isDarkMode ? darkTextSecondary : lightTextSecondary,
+                          color: _isDarkMode
+                              ? darkTextSecondary
+                              : lightTextSecondary,
                           letterSpacing: 0.5,
                         ),
                       ),
                       const SizedBox(height: 8),
-                      ..._systemItems.map((item) => _buildExpandedNavItem(item)),
+                      ..._systemItems
+                          .map((item) => _buildExpandedNavItem(item)),
                       _buildExpandedNavItem({
                         'id': 'darkToggle',
-                        'icon': _isDarkMode ? FontAwesomeIcons.sun : FontAwesomeIcons.moon,
+                        'icon': _isDarkMode
+                            ? FontAwesomeIcons.sun
+                            : FontAwesomeIcons.moon,
                         'title': 'Dark mode',
                         'isToggle': true,
                       }),
@@ -500,7 +557,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             border: Border(
-              top: BorderSide(color: _isDarkMode ? darkCardBorder : lightCardBorder),
+              top: BorderSide(
+                  color: _isDarkMode ? darkCardBorder : lightCardBorder),
             ),
           ),
           child: Column(
@@ -530,7 +588,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           _userEmail,
                           style: GoogleFonts.inter(
                             fontSize: 12,
-                            color: _isDarkMode ? darkTextSecondary : lightTextSecondary,
+                            color: _isDarkMode
+                                ? darkTextSecondary
+                                : lightTextSecondary,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -577,7 +637,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             height: 48,
             decoration: BoxDecoration(
               color: isActive
-                  ? (_isDarkMode ? darkCardBorder.withOpacity(0.2) : lightAccent.withOpacity(0.15))
+                  ? (_isDarkMode
+                      ? darkCardBorder.withOpacity(0.2)
+                      : lightAccent.withOpacity(0.15))
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(12),
             ),
@@ -617,16 +679,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
           decoration: BoxDecoration(
             color: isActive
-                ? (_isDarkMode ? darkCardBorder.withOpacity(0.2) : lightCardBorder.withOpacity(0.2))
+                ? (_isDarkMode
+                    ? darkCardBorder.withOpacity(0.2)
+                    : lightCardBorder.withOpacity(0.2))
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(6),
             border: isActive
                 ? Border(
-              left: BorderSide(
-                color: _isDarkMode ? darkAccent : lightAccent,
-                width: 3,
-              ),
-            )
+                    left: BorderSide(
+                      color: _isDarkMode ? darkAccent : lightAccent,
+                      width: 3,
+                    ),
+                  )
                 : null,
           ),
           child: Row(
@@ -640,7 +704,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     size: 16,
                     color: isActive
                         ? (_isDarkMode ? darkAccent : lightAccent)
-                        : (_isDarkMode ? darkTextSecondary : lightTextSecondary),
+                        : (_isDarkMode
+                            ? darkTextSecondary
+                            : lightTextSecondary),
                   ),
                 ),
               ),
@@ -670,9 +736,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       width: 40,
       height: 20,
       decoration: BoxDecoration(
-        color: _isDarkMode
-            ? darkAccent
-            : lightCardBorder,
+        color: _isDarkMode ? darkAccent : lightCardBorder,
         borderRadius: BorderRadius.circular(10),
       ),
       child: AnimatedAlign(
@@ -701,16 +765,28 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget _buildBottomNavigation() {
     // Only show the main nav items and dark toggle, in the same order as HTML
     final List<Map<String, dynamic>> navItems = [
-      {'id': 'dashboard', 'icon': FontAwesomeIcons.chartColumn, 'title': 'Dashboard'},
+      {
+        'id': 'dashboard',
+        'icon': FontAwesomeIcons.chartColumn,
+        'title': 'Dashboard'
+      },
       {'id': 'chatbot', 'icon': FontAwesomeIcons.robot, 'title': 'AI Chatbot'},
       {'id': 'notes', 'icon': FontAwesomeIcons.stickyNote, 'title': 'Notes'},
-      {'id': 'taskManager', 'icon': FontAwesomeIcons.tasks, 'title': 'Task Manager'},
-      {'id': 'attendance', 'icon': FontAwesomeIcons.calendarDays, 'title': 'Attendance'},
+      {
+        'id': 'taskManager',
+        'icon': FontAwesomeIcons.tasks,
+        'title': 'Task Manager'
+      },
+      {
+        'id': 'attendance',
+        'icon': FontAwesomeIcons.calendarDays,
+        'title': 'Attendance'
+      },
       {'id': 'settings', 'icon': FontAwesomeIcons.cog, 'title': 'Settings'},
       {
         'id': 'darkToggle',
         'icon': _isDarkMode ? FontAwesomeIcons.sun : FontAwesomeIcons.moon,
-        'title': _isDarkMode ? 'Light Mode' : 'Dark Mode',
+        'title': 'Dark Mode',
         'isToggle': true,
       },
     ];
@@ -724,7 +800,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         decoration: BoxDecoration(
           color: _isDarkMode ? darkCardBg : lightCardBg,
           border: Border(
-            top: BorderSide(color: _isDarkMode ? darkCardBorder : lightCardBorder),
+            top: BorderSide(
+                color: _isDarkMode ? darkCardBorder : lightCardBorder),
           ),
           boxShadow: [
             BoxShadow(
@@ -761,7 +838,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           height: 48,
           decoration: BoxDecoration(
             color: isActive
-                ? (_isDarkMode ? darkCardBorder.withOpacity(0.2) : lightAccent.withOpacity(0.15))
+                ? (_isDarkMode
+                    ? darkCardBorder.withOpacity(0.2)
+                    : lightAccent.withOpacity(0.15))
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
           ),
@@ -834,4 +913,3 @@ class GridPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
-
